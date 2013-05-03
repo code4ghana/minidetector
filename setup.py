@@ -1,10 +1,11 @@
+#!/usr/bin/python
 from distutils.core import setup
 
 setup(
     name='minidetector',
-    version='1.3',
+    version='1.3.1',
     description='Django middleware and view decorator to detect phones and small-screen devices',
-    long_description = open("readme.markdown").read(),
+    long_description = '',
     author='metamoof, Chris Drackett, Steve Schwarz, Andrew MacKinlay',
     url = "http://github.com/admackin/minidetector",
     package_dir={'': 'src'},
