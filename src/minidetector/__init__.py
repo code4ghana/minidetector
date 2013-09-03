@@ -2,6 +2,7 @@ from django import middleware
 from django.http import HttpResponseRedirect
 from minidetector import settings as minidetector_settings
 from minidetector.useragents import search_strings
+import inspect
 
 class Middleware(object):
     @staticmethod
@@ -157,10 +158,20 @@ def detect_mobile(view):
         True or False depending on whether the request should be considered
         to come from a small-screen device such as a phone or a PDA"""
 
+    arguments=inspect.getargspec(view)[0]
+    if len(arguments) and (arguments[0]=='self'):
+        #class based view
+        def detected(self,request,*args,**kwargs):
+            Middleware.process_request(request)
+            return view(self,request, *args, **kwargs)
+        detected.__doc__ = "%s\n[Wrapped by detect_mobile which detects if the request is from a phone]" % view.__doc__
+        return detected
+
     def detected(request, *args, **kwargs):
-        middleware.process_request(request)
+        Middleware.process_request(request)
         return view(request, *args, **kwargs)
     detected.__doc__ = "%s\n[Wrapped by detect_mobile which detects if the request is from a phone]" % view.__doc__
     return detected
+
 
 __all__ = ['Middleware', 'detect_mobile']
